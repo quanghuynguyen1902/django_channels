@@ -4,6 +4,7 @@ from notifications.constant_variables import NotificationStatus, NOTIFICATION_ST
 from users.models import User
 
 
+
 class NotificationHistory(models.Model):
     title = models.TextField(default='', blank=True)
     to_user = models.ForeignKey(User, null=True, blank=False, on_delete=models.CASCADE)

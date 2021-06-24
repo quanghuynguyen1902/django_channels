@@ -15,14 +15,11 @@ def get_user(app_key):
 class NotificationConsumer(AsyncWebsocketConsumer):
     async def connect(self):
 
-        user = await get_user(self.scope["query_string"].decode("utf8").split("=")[1])
-        if user:
-            self.room_name = 'notification'
-            self.room_group_name = self.room_name + '_' + user.username
-        
-        else:
-            self.room_name = 'notification'
-            self.room_group_name = self.room_name + '_' + 'anonymous'
+        app_key = self.scope["query_string"].decode("utf8").split("=")[1]
+    
+        self.room_name = 'notification'
+        self.room_group_name = self.room_name + '_' + app_key
+    
 
         # Join room
         await self.channel_layer.group_add(
