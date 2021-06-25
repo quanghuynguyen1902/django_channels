@@ -45,12 +45,30 @@ export default {
       interval: null
     };
   },
-  // mounted() {
-  //   this.getNotificationCount();
-  //   if (!this.interval) {
-  //     this.interval = setInterval(this.updateNotification, 10000);
-  //   }
-  // },
+  created() {
+    this.connection = new WebSocket(
+      "ws://localhost:8000/ws/test?app_key=c7bf8aa2bc1f1d40aabf2541663ee3ee19e708595f"
+    );
+
+    this.connection.onmessage = function(event) {
+      let data = JSON.parse(event.data);
+      let message = JSON.parse(data.message);
+      this.notification_count = message[0].quantity;
+
+      if (this.notification_count > 9) {
+        this.notification_count = "9+";
+      }
+      console.log(this.notification_count);
+    };
+
+    this.connection.onopen = function(event) {
+      console.log(event);
+    };
+    this.getNotificationCount();
+    // if (!this.interval) {
+    //   this.interval = setInterval(this.updateNotification, 10000);
+    // }
+  },
   beforeDestroy() {
     if (this.interval) {
       clearInterval(this.interval);
@@ -65,15 +83,6 @@ export default {
       this.notification_count = 0;
       const response = await UserService.getUserBoard(Api.NOTIFICATION);
       this.notifications = response.data;
-    },
-    async updateNotification() {
-      if (this.$store.state.auth.status.loggedIn) {
-        const count = await UserService.getUserBoard(Api.NOTIFICATION_COUNT);
-        this.notification_count = count.data[0].quantity;
-        if (this.countNotify > 9) {
-          this.notification_count = "9+";
-        }
-      }
     },
     markAllReaded() {
       this.allReaded = true;
