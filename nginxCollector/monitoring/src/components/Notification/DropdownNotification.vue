@@ -46,22 +46,22 @@ export default {
     };
   },
   created() {
-    this.connection = new WebSocket(
-      "ws://localhost:8000/ws/test?app_key=c7bf8aa2bc1f1d40aabf2541663ee3ee19e708595f"
+    let self = this;
+    const connection = new WebSocket(
+      "ws://localhost:8000/ws/test?app_key=60dc3e3413632f2787e04ac598c97d4cd525357ce1"
     );
 
-    this.connection.onmessage = function(event) {
+    connection.onmessage = function(event) {
       let data = JSON.parse(event.data);
       let message = JSON.parse(data.message);
-      this.notification_count = message[0].quantity;
+      self.notification_count = message[0].quantity;
 
-      if (this.notification_count > 9) {
-        this.notification_count = "9+";
+      if (self.notification_count > 9) {
+        self.notification_count = "9+";
       }
-      console.log(this.notification_count);
     };
 
-    this.connection.onopen = function(event) {
+    connection.onopen = function(event) {
       console.log(event);
     };
     this.getNotificationCount();
